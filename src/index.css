@@ -1,0 +1,158 @@
+/* AniDa Design Tokens (дока §10).
+   Все цвета только через переменные. Компоненты не хранят hex напрямую. */
+:root,
+[data-theme='black-blue'] {
+  --background: #05070f;
+  --surface: #0c1222;
+  --surface-secondary: #131b31;
+  --text: #f2f5ff;
+  --text-secondary: #9aa7c7;
+  --border: #05070f;
+  --primary: #2f7bff;
+  --primary-hover: #1f63dd;
+  --accent: #7aa5ff;
+  --shadow: #000000;
+  --radius: 14px;
+  --spacing: 8px;
+}
+[data-theme='black-white'] {
+  --background: #0a0a0a; --surface: #171717; --surface-secondary: #232323;
+  --text: #f8f8f8; --text-secondary: #b5b5b5; --border: #000000;
+  --primary: #f5f5f5; --primary-hover: #d4d4d4; --accent: #ffffff; --shadow: #000000;
+}
+[data-theme='red-blue'] {
+  --background: #0b0b14; --surface: #151527; --surface-secondary: #1f1f38;
+  --text: #f4f4f8; --text-secondary: #a8a8c0; --border: #05050c;
+  --primary: #e5484d; --primary-hover: #c93a3f; --accent: #2f7bff; --shadow: #000000;
+}
+[data-theme='purple'] {
+  --background: #0d0716; --surface: #1a1030; --surface-secondary: #251743;
+  --text: #f3efff; --text-secondary: #b9a8e0; --border: #060310;
+  --primary: #8b5cf6; --primary-hover: #7447e0; --accent: #c4b5fd; --shadow: #000000;
+}
+[data-theme='orange'] {
+  --background: #140b04; --surface: #221206; --surface-secondary: #311a0b;
+  --text: #fff3e8; --text-secondary: #d3ae8d; --border: #0a0502;
+  --primary: #ff7a1a; --primary-hover: #e06409; --accent: #ffb37a; --shadow: #000000;
+}
+[data-theme='green'] {
+  --background: #04120b; --surface: #0a2013; --surface-secondary: #10301c;
+  --text: #ebfff3; --text-secondary: #96c4a8; --border: #020b06;
+  --primary: #22c55e; --primary-hover: #16a34a; --accent: #86efac; --shadow: #000000;
+}
+[data-theme='pink'] {
+  --background: #150810; --surface: #261019; --surface-secondary: #371723;
+  --text: #ffeef6; --text-secondary: #d6a4bc; --border: #0b0408;
+  --primary: #ec4899; --primary-hover: #d12f80; --accent: #f9a8d4; --shadow: #000000;
+}
+[data-theme='blue-light'] {
+  --background: #eef4ff; --surface: #ffffff; --surface-secondary: #dbe7ff;
+  --text: #0b1a33; --text-secondary: #4a6285; --border: #0b1a33;
+  --primary: #2f7bff; --primary-hover: #1f63dd; --accent: #174a9e; --shadow: #0b1a33;
+}
+[data-theme='dark'] {
+  --background: #101014; --surface: #1a1a20; --surface-secondary: #24242c;
+  --text: #ececf1; --text-secondary: #9aa4b2; --border: #000000;
+  --primary: #9aa4b2; --primary-hover: #7c8794; --accent: #cfd6df; --shadow: #000000;
+}
+[data-theme='custom'] {
+  --background: var(--custom-bg, #05070f);
+  --surface: var(--custom-surface, #0c1222);
+  --surface-secondary: var(--custom-surface2, #131b31);
+  --text: #f2f5ff; --text-secondary: #9aa7c7; --border: #05070f;
+  --primary: var(--custom-primary, #2f7bff);
+  --primary-hover: var(--custom-primary-hover, #1f63dd);
+  --accent: var(--custom-primary, #2f7bff); --shadow: #000000;
+}
+
+* { box-sizing: border-box; }
+html, body, #root { height: 100%; }
+body {
+  margin: 0;
+  background: var(--background);
+  color: var(--text);
+  font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+  overflow: hidden;
+}
+
+/* Контролируемый Neo-Brutalism: чёткая граница + умеренный offset-shadow */
+.brutal {
+  border: 2px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: 4px 4px 0 var(--shadow);
+}
+.brutal-sm {
+  border: 2px solid var(--border);
+  border-radius: 10px;
+  box-shadow: 3px 3px 0 var(--shadow);
+}
+.btn-brutal {
+  border: 2px solid var(--border);
+  border-radius: 10px;
+  box-shadow: 3px 3px 0 var(--shadow);
+  transition: transform 0.08s ease, box-shadow 0.08s ease;
+  cursor: pointer;
+  user-select: none;
+}
+.btn-brutal:hover { transform: translate(-1px, -1px); box-shadow: 4px 4px 0 var(--shadow); }
+.btn-brutal:active { transform: translate(2px, 2px); box-shadow: 1px 1px 0 var(--shadow); }
+.btn-brutal:disabled { opacity: 0.5; cursor: default; transform: none; }
+
+input, select { font-family: inherit; }
+
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: var(--background); }
+::-webkit-scrollbar-thumb { background: var(--surface-secondary); border-radius: 8px; border: 2px solid var(--background); }
+
+@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes pulse-soft { 0%,100% { opacity: 1; } 50% { opacity: 0.55; } }
+
+/* ---- Mobile / touch-first (§2–3, §16): нижняя навигация, крупные тапы, без hover ---- */
+.anida-card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 14px;
+}
+.anida-category-row {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.anida-hero h1 { font-size: 32px; }
+
+@media (max-width: 820px) {
+  .brutal { box-shadow: 3px 3px 0 var(--shadow); }
+  .anida-main { padding: 12px; }
+  /* Категории — горизонтальный скролл */
+  .anida-category-row {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    padding-bottom: 6px;
+    scroll-snap-type: x proximity;
+    -webkit-overflow-scrolling: touch;
+  }
+  .anida-category-row > * { flex-shrink: 0; scroll-snap-align: start; }
+  /* Карточки — 1 в ряд на узких, 2 в ряд от ~560px */
+  .anida-card-grid { grid-template-columns: 1fr; gap: 12px; }
+  .anida-hero { padding: 20px !important; }
+  .anida-hero h1 { font-size: 24px !important; }
+}
+@media (min-width: 560px) and (max-width: 820px) {
+  .anida-card-grid { grid-template-columns: repeat(2, 1fr); }
+}
+/* Touch-first: удобный target и никаких hover-трансформаций на coarse pointer */
+@media (pointer: coarse) {
+  .btn-brutal { min-height: 44px; }
+  .btn-brutal:hover { transform: none; box-shadow: 3px 3px 0 var(--shadow); }
+  .anida-category-row::-webkit-scrollbar { display: none; }
+}
+/* Вертикальный первый запуск: модалка-приветствие как bottom-sheet */
+@media (max-width: 560px) {
+  .anida-welcome-backdrop { padding: 0 !important; align-items: end !important; }
+  .anida-welcome-sheet {
+    max-width: 100% !important;
+    border-radius: 18px 18px 0 0 !important;
+    max-height: 92dvh;
+    overflow-y: auto;
+  }
+}

@@ -1,0 +1,79 @@
+# Codemagic — сборка AniDa для iOS без своего Mac
+# Как пользоваться — builds/ios/CLOUD-iOS.md
+# По умолчанию: UNSIGNED сборка (CODE_SIGNING_ALLOWED=NO) → .ipa,
+# который подписываешь сам через Sideloadly/AltStore бесплатным Apple ID.
+workflows:
+  ios-anida:
+    name: AniDa iOS (unsigned)
+    max_build_duration: 60
+    instance_type: mac_mini_m2
+    environment:
+      node: 20
+      xcode: latest
+      cocoapods: default
+    scripts:
+      - name: Install npm dependencies
+        script: npm install --no-audit --no-fund
+      - name: Build web assets
+        script: npm run build
+      - name: Capacitor sync iOS
+        script: npx cap sync ios
+      - name: CocoaPods install
+        script: cd ios/App && pod install
+      - name: Xcode archive (no signing)
+        script: |
+          xcodebuild -workspace ios/App/App.xcworkspace \
+            -scheme App \
+            -configuration Release \
+            -sdk iphoneos \
+            -archivePath $CM_BUILD_DIR/AniDa.xcarchive \
+            CODE_SIGNING_ALLOWED=NO \
+            archive
+      - name: Pack unsigned .ipa
+        script: |
+          APP_PATH=$(find $CM_BUILD_DIR/AniDa.xcarchive/Products/Applications -name "*.app" -maxdepth 1 | head -n 1)
+          mkdir -p $CM_BUILD_DIR/Payload
+          cp -R "$APP_PATH" $CM_BUILD_DIR/Payload/
+          cd $CM_BUILD_DIR && zip -r AniDa-unsigned.ipa Payload
+    artifacts:
+      - AniDa-unsigned.ipa
+
+  # --- Вариант с автоподписью (нужен платный Apple Developer $99/год) ---
+  # В Codemagic: Teams → Developer Portal → подключить Apple Developer,
+  # затем раскомментировать блок ниже и закомментировать workflow выше.
+  # ios-anida-signed:
+  #   name: AniDa iOS (signed)
+  #   max_build_duration: 60
+  #   instance_type: mac_mini_m2
+  #   environment:
+  #     node: 20
+  #     xcode: latest
+  #     cocoapods: default
+  #     ios_signing:
+  #       distribution_type: ad_hoc
+  #       bundle_ids:
+  #         - com.anida.launcher
+  #   scripts:
+  #     - name: Install npm dependencies
+  #       script: npm install --no-audit --no-fund
+  #     - name: Build web assets
+  #       script: npm run build
+  #     - name: Capacitor sync iOS
+  #       script: npx cap sync ios
+  #     - name: CocoaPods install
+  #       script: cd ios/App && pod install
+  #     - name: Set up keychain for signing
+  #       script: keychain initialize
+  #     - name: Fetch profiles
+  #       script: |
+  #         app-store-connect fetch-signing-files com.anida.launcher \
+  #           --type IOS_APP_ADHOC --create
+  #     - name: Set up profiles
+  #       script: xcode-project use-profiles
+  #     - name: Build .ipa
+  #       script: |
+  #         xcode-project build-ipa \
+  #           --workspace ios/App/App.xcworkspace \
+  #           --scheme App
+  #   artifacts:
+  #     - build/ios/ipa/*.ipa

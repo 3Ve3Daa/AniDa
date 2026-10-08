@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">AniDa</string>
+    <string name="title_activity_main">AniDa</string>
+    <string name="package_name">com.anida.launcher</string>
+    <string name="custom_url_scheme">com.anida.launcher</string>
+</resources>

@@ -1,0 +1,41 @@
+name: AniDa iOS (unsigned)
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build-ios:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Install npm dependencies
+        run: npm install --no-audit --no-fund
+      - name: Build web assets
+        run: npm run build
+      - name: Capacitor sync iOS
+        run: npx cap sync ios
+      - name: CocoaPods install
+        run: cd ios/App && pod install
+      - name: Xcode archive (no signing)
+        run: |
+          xcodebuild -workspace ios/App/App.xcworkspace \
+            -scheme App \
+            -configuration Release \
+            -sdk iphoneos \
+            -archivePath $RUNNER_TEMP/AniDa.xcarchive \
+            CODE_SIGNING_ALLOWED=NO \
+            archive
+      - name: Pack unsigned .ipa
+        run: |
+          APP_PATH=$(find $RUNNER_TEMP/AniDa.xcarchive/Products/Applications -name "*.app" -maxdepth 1 | head -n 1)
+          mkdir -p $RUNNER_TEMP/Payload
+          cp -R "$APP_PATH" $RUNNER_TEMP/Payload/
+          cd $RUNNER_TEMP && zip -r AniDa-unsigned.ipa Payload
+      - name: Upload .ipa
+        uses: actions/upload-artifact@v4
+        with:
+          name: AniDa-unsigned-ipa
+          path: ${{ runner.temp }}/AniDa-unsigned.ipa

@@ -1,0 +1,34 @@
+node_modules
+dist
+dist-electron
+release
+out
+*.log
+.DS_Store
+Thumbs.db
+
+# Локальные артефакты сборок
+builds/desktop/
+builds/android/
+AniDa-Apps/
+android/app/build/
+android/.gradle/
+android/local.properties
+android/capacitor.settings.gradle
+ios/App/Pods/
+ios/App/build/
+*.ipa
+*.apk
+*.aab
+*.exe
+*.blockmap
+
+# Исходники картинок из корня (обработанные лежат в public/)
+/ava.jpg
+/AniLibria.jpg
+/AniLibria TV.jpg
+/YummyAnime.jpg
+/Jut.su.jpg
+/Shikimori.png
+/AnimeGO.png
+/Anixart.png
