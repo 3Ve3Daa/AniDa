@@ -38,4 +38,42 @@
       { passive: true }
     );
   }
+
+  // Прямые скачивания без ухода со страницы: тянем файл в blob
+  // и отдаём его браузеру — вкладка остаётся на месте.
+  function dlFilename(url) {
+    try { return decodeURIComponent(url.split('/').pop().split('?')[0]) || 'anida-file'; }
+    catch (e) { return 'anida-file'; }
+  }
+  document.querySelectorAll('a[href*="releases/download"]').forEach(function (a) {
+    a.addEventListener('click', function (ev) {
+      ev.preventDefault();
+      var url = a.href;
+      var original = a.innerHTML;
+      a.style.pointerEvents = 'none';
+      a.innerHTML = 'Скачивание…';
+      fetch(url, { redirect: 'follow' })
+        .then(function (res) {
+          if (!res.ok) throw new Error('HTTP ' + res.status);
+          return res.blob();
+        })
+        .then(function (blob) {
+          var obj = URL.createObjectURL(blob);
+          var tmp = document.createElement('a');
+          tmp.href = obj;
+          tmp.download = dlFilename(url);
+          document.body.appendChild(tmp);
+          tmp.click();
+          setTimeout(function () { URL.revokeObjectURL(obj); tmp.remove(); }, 4000);
+          a.innerHTML = original;
+          a.style.pointerEvents = '';
+        })
+        .catch(function () {
+          // CORS/сеть подвели — откат к обычному переходу
+          a.innerHTML = original;
+          a.style.pointerEvents = '';
+          window.location.href = url;
+        });
+    });
+  });
 })();
