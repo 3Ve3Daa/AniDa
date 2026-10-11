@@ -149,6 +149,7 @@ export const SITES: AnimeSite[] = [
     allowedOrigins: ['https://animeon.cc'],
     category: ['anime', 'new'],
     logoText: 'AO',
+    logo: 'logos/animeon.jpg',
     tags: ['каталог', 'онлайн'],
   },
 ];
