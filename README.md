@@ -7,7 +7,9 @@ AniDa — приложение-лаунчер: каталог любимых а�
 
 - **Desktop:** Windows (приоритет), архитектура готова к macOS/Linux — Electron.
 - **Mobile:** Android, iOS — Capacitor (общая React-логика, touch-first UI).
-- **Дизайн:** Black & Blue по умолчанию, Neo-Brutalism + Flat/Material, Design Tokens.
+- **Дизайн:** Ember Orange по умолчанию (тёплый графит + огонь #FF7417),
+  Neo-Brutalism + Flat/Material, Design Tokens, плавные анимации
+  (каскад карточек, переходы страниц, скелетоны, `prefers-reduced-motion`).
 - **Иконки:** только Lucide (`lucide-react`), логотипы сервисов — локальные файлы.
 - **Discord Rich Presence:** только desktop, живой статус в Настройках.
 

@@ -6,6 +6,7 @@ import { ErrorState, LoadingScreen } from '../components/LoadingAndError';
 import { openInExternalBrowser } from '../utils/external';
 import { useApp } from '../store/useAppStore';
 import { handleAppState } from '../services/discordRpc';
+import { ADBLOCK_CSS, ADBLOCK_JS } from '../services/adblock';
 import { isNativeMobile, useIsMobile } from '../services/platform';
 import { MobileSiteView } from './MobileSiteView';
 
@@ -46,6 +47,9 @@ function SiteWebviewInner({
   const [blocked, setBlocked] = useState(false);
   const isElectron = !!window.electronAPI?.isElectron;
   const allowed = isAllowedUrl(site.url);
+  const { adblockEnabled } = useApp();
+  const adblockRef = useRef(adblockEnabled);
+  adblockRef.current = adblockEnabled;
 
   useEffect(() => {
     handleAppState('loading', site.name);
@@ -76,6 +80,17 @@ function SiteWebviewInner({
       setNavigating(false);
       setStatus((s) => (s === 'error' ? s : 'ready'));
       handleAppState('site', site.name);
+      // Косметика + активные действия: прячем контейнеры, жмём «Пропустить»,
+      // глушим видео в ad-блоках (сетевые запросы режет main).
+      if (adblockRef.current && ADBLOCK_CSS) {
+        try {
+          el.insertCSS(ADBLOCK_CSS);
+        } catch {}
+        try {
+          const p = el.executeJavaScript(ADBLOCK_JS, false);
+          if (p && typeof p.catch === 'function') p.catch(() => {});
+        } catch {}
+      }
       syncNavState();
     };
     // did-fail-load: реагируем ТОЛЬКО на главную рамку, ERR_ABORTED (-3) — не ошибка
@@ -179,48 +194,102 @@ function SiteWebviewInner({
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
       {/* Верхняя панель: компактная на mobile, полная на desktop */}
       <div
-        className="brutal-sm"
+        className="brutal-sm glass-panel"
         style={{
           display: 'flex',
           alignItems: 'center',
           gap: 8,
           background: 'var(--surface)',
-          padding: isMobile ? '8px' : '10px 12px',
-          marginBottom: 12,
+          padding: isMobile ? '8px 10px' : '10px 14px',
+          marginBottom: 10,
+          borderRadius: 12,
           flexWrap: isMobile ? 'wrap' : 'nowrap',
         }}
       >
         {showNavButtons && (
-          <>
-            <button className="btn-brutal" style={toolbarBtn(!canBack)} title="Назад"
-              onClick={goBack} disabled={!canBack}>
+          <div style={{ display: 'flex', gap: 6 }}>
+            <button
+              className="btn-brutal"
+              style={toolbarBtn(!canBack)}
+              title="Назад"
+              onClick={goBack}
+              disabled={!canBack}
+            >
               <ArrowLeft size={17} />
             </button>
-            <button className="btn-brutal" style={toolbarBtn(!canFwd)} title="Вперёд"
-              onClick={goForward} disabled={!canFwd}>
+            <button
+              className="btn-brutal"
+              style={toolbarBtn(!canFwd)}
+              title="Вперёд"
+              onClick={goForward}
+              disabled={!canFwd}
+            >
               <ArrowRight size={17} />
             </button>
-          </>
+          </div>
         )}
-        <button className="btn-brutal" style={toolbarBtn(false)} title="Обновить текущую страницу" onClick={reload}>
+        <button
+          className="btn-brutal"
+          style={toolbarBtn(false)}
+          title="Обновить текущую страницу"
+          onClick={reload}
+        >
           {navigating ? (
-            <Loader2 size={16} style={{ animation: 'spin 1s linear infinite' }} />
+            <Loader2 size={16} style={{ animation: 'spin 1s linear infinite' }} color="var(--primary)" />
           ) : (
             <RotateCw size={16} />
           )}
         </button>
-        <div style={{ fontWeight: 800, fontSize: isMobile ? 13 : 14, marginLeft: 4, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', flex: isMobile ? '1 1 100%' : undefined, order: isMobile ? -1 : undefined }}>
-          {site.name}
+
+        <div
+          style={{
+            fontWeight: 800,
+            fontSize: isMobile ? 13 : 14,
+            marginLeft: 6,
+            whiteSpace: 'nowrap',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            flex: isMobile ? '1 1 100%' : undefined,
+            order: isMobile ? -1 : undefined,
+            display: 'flex',
+            alignItems: 'center',
+            gap: 6,
+          }}
+        >
+          <span style={{ color: 'var(--text)' }}>{site.name}</span>
           {!isMobile && (
-            <span style={{ color: 'var(--text-secondary)', fontWeight: 600 }}> · {currentUrl.replace(/^https?:\/\//, '')}</span>
+            <span
+              className="badge-pill"
+              style={{
+                background: 'var(--surface-secondary)',
+                border: '1px solid var(--border-subtle)',
+                color: 'var(--text-secondary)',
+                fontSize: 11,
+                fontWeight: 600,
+              }}
+            >
+              {currentUrl.replace(/^https?:\/\//, '')}
+            </span>
           )}
         </div>
+
         <div style={{ marginLeft: 'auto', display: 'flex', gap: 8 }}>
           <button
             className="btn-brutal"
             title="Открыть текущую страницу во внешнем браузере"
             onClick={() => openInExternalBrowser(currentUrl)}
-            style={{ display: 'flex', alignItems: 'center', gap: 6, background: 'var(--surface-secondary)', color: 'var(--text)', fontWeight: 800, fontSize: 12, padding: '8px 12px', minHeight: isMobile ? 44 : undefined }}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 6,
+              background: 'var(--surface-secondary)',
+              color: 'var(--text)',
+              fontWeight: 800,
+              fontSize: 12,
+              padding: '8px 12px',
+              borderRadius: 8,
+              minHeight: isMobile ? 42 : undefined,
+            }}
           >
             <ExternalLink size={14} /> {isMobile ? 'Браузер' : 'Внешний браузер'}
           </button>
@@ -228,7 +297,19 @@ function SiteWebviewInner({
             className="btn-brutal"
             title="Вернуться в каталог"
             onClick={backToCatalog}
-            style={{ display: 'flex', alignItems: 'center', gap: 6, background: 'var(--primary)', color: '#fff', fontWeight: 800, fontSize: 12, padding: '8px 12px', minHeight: isMobile ? 44 : undefined }}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 6,
+              background: 'var(--primary)',
+              color: '#fff',
+              fontWeight: 800,
+              fontSize: 12,
+              padding: '8px 14px',
+              borderRadius: 8,
+              boxShadow: '0 0 10px var(--primary-glow)',
+              minHeight: isMobile ? 42 : undefined,
+            }}
           >
             <LayoutGrid size={14} /> {isMobile ? '' : 'Каталог'}
           </button>
@@ -236,16 +317,78 @@ function SiteWebviewInner({
       </div>
 
       {!allowed && (
-        <div className="brutal-sm" style={{ display: 'flex', gap: 8, alignItems: 'center', background: 'var(--surface)', padding: '8px 12px', marginBottom: 12, fontSize: 12, color: 'var(--text-secondary)' }}>
+        <div
+          className="brutal-sm"
+          style={{
+            display: 'flex',
+            gap: 8,
+            alignItems: 'center',
+            background: 'var(--surface)',
+            padding: '8px 12px',
+            marginBottom: 10,
+            fontSize: 12,
+            color: 'var(--text-secondary)',
+            borderRadius: 10,
+          }}
+        >
           <ShieldAlert size={15} color="var(--primary)" />
           URL вне whitelist — встроенный просмотр ограничен, используйте внешний браузер.
-          <button onClick={() => openInExternalBrowser(currentUrl)} className="btn-brutal" style={{ marginLeft: 'auto', fontSize: 12, fontWeight: 800, padding: '6px 10px', background: 'var(--surface-secondary)', color: 'var(--text)' }}>
+          <button
+            onClick={() => openInExternalBrowser(currentUrl)}
+            className="btn-brutal"
+            style={{
+              marginLeft: 'auto',
+              fontSize: 12,
+              fontWeight: 800,
+              padding: '6px 10px',
+              background: 'var(--surface-secondary)',
+              color: 'var(--text)',
+              borderRadius: 8,
+            }}
+          >
             Открыть снаружи
           </button>
         </div>
       )}
 
-      <div className="brutal" style={{ flex: 1, overflow: 'hidden', background: '#000', position: 'relative', minHeight: 0 }}>
+      {/* Indeterminate loading bar */}
+      {navigating && (
+        <div
+          style={{
+            position: 'relative',
+            width: '100%',
+            height: 3,
+            background: 'var(--surface-secondary)',
+            overflow: 'hidden',
+            borderRadius: '3px 3px 0 0',
+            marginBottom: -3,
+            zIndex: 10,
+          }}
+        >
+          <div
+            style={{
+              position: 'absolute',
+              top: 0,
+              height: '100%',
+              background: 'var(--primary)',
+              boxShadow: '0 0 8px var(--primary)',
+              animation: 'progress-indeterminate 1.4s infinite linear',
+            }}
+          />
+        </div>
+      )}
+
+      <div
+        className="brutal"
+        style={{
+          flex: 1,
+          overflow: 'hidden',
+          background: '#000',
+          position: 'relative',
+          minHeight: 0,
+          borderRadius: 12,
+        }}
+      >
         {firstLoad && status === 'loading' && (
           <div style={{ position: 'absolute', inset: 0, zIndex: 2 }}>
             <LoadingScreen name={site.name} />

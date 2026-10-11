@@ -140,6 +140,17 @@ export const SITES: AnimeSite[] = [
     logo: 'logos/anixart.png',
     tags: ['каталог'],
   },
+  {
+    id: 'animeon',
+    name: 'AnimeOn',
+    description: 'Онлайн-кинотеатр аниме с каталогом и поиском.',
+    url: 'https://animeon.cc/',
+    origin: 'https://animeon.cc',
+    allowedOrigins: ['https://animeon.cc'],
+    category: ['anime', 'new'],
+    logoText: 'AO',
+    tags: ['каталог', 'онлайн'],
+  },
 ];
 
 export const CATEGORIES: { id: string; label: string; match: SiteCategory | 'all' | 'favorites' }[] = [
@@ -165,6 +176,7 @@ export const ALLOWED_HOSTS = [
   'shikimori.me',
   'animego.org',
   'anixart.tv',
+  'animeon.cc',
 ];
 
 export function isAllowedUrl(raw: string): boolean {

@@ -9,6 +9,10 @@ const path = require('path');
 
 const isDev = !app.isPackaged;
 
+// Сайты отдают язык по Accept-Language Chromium: фиксируем русский,
+// иначе часть платформ показывает японский/английский интерфейс.
+app.commandLine.appendSwitch('lang', 'ru');
+
 // ---- Discord RPC (main-процесс, активный) ----
 // Важно: коннект пробуем НЕ один раз при старте, а циклом до успеха —
 // Discord часто запускают ПОСЛЕ AniDa, и без ретрая активности не будет.
@@ -136,6 +140,7 @@ const PRESENCE_MAP = {
   FAVORITES_OPENED: { details: 'Favorites', state: 'Viewing favorites' },
   HISTORY_OPENED: { details: 'History', state: 'Viewing history' },
   SETTINGS_OPENED: { details: 'Settings', state: 'Changing settings' },
+  GAMES_OPENED: { details: 'Block Blast', state: 'Playing Block Blast' },
   LOADING_SERVICE: { details: 'Loading…', state: 'Loading a service' },
 };
 
@@ -191,6 +196,57 @@ ipcMain.handle('open-external', async (_e, url) => {
   }
   await shell.openExternal(url);
   return true;
+});
+
+// ---- Блокировка рекламы (desktop): режем запросы к рекламным хостам ----
+// Работает на уровне сессии webview-гостей: top-level документ сайта грузится,
+// а подзапросы к ad-хостам отменяются. Список — electron/adblock.json.
+let ADBLOCK_HOSTS = [];
+try {
+  const list = require('./adblock.json');
+  if (Array.isArray(list.hosts)) ADBLOCK_HOSTS = list.hosts.map((h) => String(h).toLowerCase());
+} catch (e) {
+  console.warn('[adblock] list load failed:', e.message);
+}
+let adblockEnabled = true;
+const adblockSessions = new Set();
+
+function isAdHost(hostname) {
+  const h = String(hostname || '').toLowerCase();
+  if (!h) return false;
+  return ADBLOCK_HOSTS.some((b) => h === b || h.endsWith('.' + b));
+}
+
+function attachAdblock(session) {
+  if (adblockSessions.has(session)) return;
+  adblockSessions.add(session);
+  try {
+    session.webRequest.onBeforeRequest({ urls: ['*://*/*'] }, (details, callback) => {
+      try {
+        const u = new URL(details.url);
+        // Режем только подресурсы, top-level навигацию сайта не трогаем.
+        if (adblockEnabled && details.resourceType !== 'mainFrame' && isAdHost(u.hostname)) {
+          callback({ cancel: true });
+          return;
+        }
+      } catch {}
+      callback({});
+    });
+  } catch (e) {
+    console.warn('[adblock] attach failed:', e.message);
+  }
+}
+
+app.on('web-contents-created', (_e, contents) => {
+  try {
+    if (contents.getType() === 'window' || contents.getType() === 'webview') {
+      attachAdblock(contents.session);
+    }
+  } catch {}
+});
+
+ipcMain.on('adblock-set', (_e, enabled) => {
+  adblockEnabled = enabled !== false;
 });
 
 let mainWindow = null;

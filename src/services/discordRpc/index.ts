@@ -7,6 +7,7 @@ export type RpcEvent =
   | 'LOADING_SERVICE'
   | 'SITE_OPENED'
   | 'SITE_CHANGED'
+  | 'GAMES_OPENED'
   | 'APP_CLOSED';
 
 declare global {
@@ -16,6 +17,7 @@ declare global {
       openExternal: (url: string) => Promise<boolean>;
       rpcState: (event: RpcEvent, siteName?: string) => void;
       rpcClear: () => void;
+      setAdblock: (enabled: boolean) => void;
       getRpcStatus: () => Promise<RpcStatusPayload>;
       onRpcStatus: (cb: (s: RpcStatusPayload) => void) => () => void;
     };
@@ -93,7 +95,7 @@ export function onRpcStatusChange(cb: (s: RpcStatusPayload) => void): () => void
 
 /** Маппинг состояния приложения → RPC (дока §14–15). */
 export function handleAppState(
-  route: 'home' | 'catalog' | 'favorites' | 'history' | 'settings' | 'site' | 'loading',
+  route: 'home' | 'catalog' | 'favorites' | 'history' | 'settings' | 'games' | 'site' | 'loading',
   siteName?: string,
 ): void {
   switch (route) {
@@ -111,6 +113,9 @@ export function handleAppState(
       break;
     case 'settings':
       updatePresence('SETTINGS_OPENED');
+      break;
+    case 'games':
+      updatePresence('GAMES_OPENED', 'Block Blast');
       break;
     case 'loading':
       updatePresence('LOADING_SERVICE', siteName);

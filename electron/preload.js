@@ -7,6 +7,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
   openExternal: (url) => ipcRenderer.invoke('open-external', url),
   rpcState: (event, siteName) => ipcRenderer.send('rpc-state', { event, siteName }),
   rpcClear: () => ipcRenderer.send('rpc-clear'),
+  setAdblock: (enabled) => ipcRenderer.send('adblock-set', enabled),
   getRpcStatus: () => ipcRenderer.invoke('rpc-status'),
   onRpcStatus: (cb) => {
     const listener = (_e, payload) => cb(payload);

@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="AniDa — единый лаунчер аниме-платформ для Windows и Android. Каталог, встроенный просмотр, блокировка рекламы, темы, Discord RPC." />
+  <link rel="icon" type="image/png" href="./assets/icon.png" />
+  <title>AniDa — всё аниме в одном месте</title>
+  <link rel="stylesheet" href="./styles.css" />
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+  <div class="page-fone" aria-hidden="true"></div>
+  <nav class="nav" id="nav">
+    <a class="brand" href="#top">
+      <img src="./assets/ava.png" alt="AniDa" />
+      <span>AniDa</span>
+    </a>
+    <div class="nav-links">
+      <a href="#features">Возможности</a>
+      <a href="#platforms">Платформы</a>
+      <a href="#how">Как это работает</a>
+      <a href="#faq">FAQ</a>
+    </div>
+    <a class="btn btn-primary btn-sm" href="#download"><i data-lucide="download"></i>Скачать</a>
+  </nav>
+
+  <header class="hero" id="top">
+    <div class="hero-bg" id="heroBg"></div>
+    <div class="hero-shade"></div>
+    <div class="hero-inner">
+      <p class="eyebrow reveal">AniDa • Единый лаунчер аниме</p>
+      <h1 class="reveal">Всё аниме<br />в одном месте</h1>
+      <p class="lede reveal">Твой личный агрегатор аниме-платформ. Открыл AniDa — выбрал сервис — смотришь. Без браузера, без лишнего шума.</p>
+      <div class="hero-cta reveal">
+        <a class="btn btn-primary" href="./downloads/AniDa%20Setup.exe"><i data-lucide="monitor"></i>Windows • 92.7 МБ</a>
+        <a class="btn btn-ghost" href="./downloads/AniDa-debug.apk"><i data-lucide="smartphone"></i>Android • 13.3 МБ</a>
+      </div>
+      <p class="version reveal">v1.1.0 • Windows 10+ • Android 8+ • iOS — скоро</p>
+    </div>
+    <a class="scroll-hint" href="#features" aria-label="Листайте вниз"><i data-lucide="chevron-down"></i></a>
+  </header>
+
+  <section class="stats">
+    <div class="stat reveal"><b>9</b><span>аниме-платформ в каталоге</span></div>
+    <div class="stat reveal"><b>3</b><span>платформы: Windows, Android, iOS</span></div>
+    <div class="stat reveal"><b>10</b><span>тем оформления + своя палитра</span></div>
+    <div class="stat reveal"><b>0</b><span>рублей — полностью бесплатно</span></div>
+  </section>
+
+  <section class="section" id="features">
+    <p class="eyebrow">Возможности</p>
+    <h2>Кинотеатр начинается<br />с одного окна</h2>
+    <div class="grid">
+      <div class="card reveal"><i data-lucide="layout-grid"></i><h3>Единый каталог</h3><p>AniLibria, YummyAnime, Jut.su, Shikimori и другие — все любимые платформы в одном месте с поиском и фильтрами.</p></div>
+      <div class="card reveal"><i data-lucide="monitor-play"></i><h3>Встроенный просмотр</h3><p>Сайты открываются внутри AniDa: назад, вперёд, обновить — как в браузере, только без вкладок.</p></div>
+      <div class="card reveal"><i data-lucide="shield-check"></i><h3>Блокировка рекламы</h3><p>Баннеры режутся, кнопки «Пропустить» жмутся сами, видеореклама глушится и проматывается.</p></div>
+      <div class="card reveal"><i data-lucide="palette"></i><h3>Темы и минимализм</h3><p>От огненного Ember до чистого Minimal Dark — плюс своя палитра и отдельный формат для телефона.</p></div>
+      <div class="card reveal"><i data-lucide="message-circle"></i><h3>Discord Rich Presence</h3><p>Друзья видят, что ты смотришь: статус обновляется при смене сервиса. Только на ПК.</p></div>
+      <div class="card reveal"><i data-lucide="gamepad-2"></i><h3>Block Blast внутри</h3><p>Встроенная офлайн-игра для телефона — скоротать время в дороге без интернета и рекламы.</p></div>
+    </div>
+  </section>
+
+  <section class="section" id="platforms">
+    <p class="eyebrow">Каталог</p>
+    <h2>Платформы внутри</h2>
+    <div class="posters">
+      <div class="poster reveal"><img src="./assets/logos/anilibria.jpg" alt="AniLibria" loading="lazy" /><b>AniLibria</b><span>anilibria.tv</span></div>
+      <div class="poster reveal"><img src="./assets/logos/anilibria-tv.jpg" alt="AniLibria TV" loading="lazy" /><b>AniLibria TV</b><span>anilibria.top</span></div>
+      <div class="poster reveal"><img src="./assets/logos/yummy.jpg" alt="YummyAnime" loading="lazy" /><b>YummyAnime</b><span>ru.yummyani.me</span></div>
+      <div class="poster reveal"><img src="./assets/logos/jutsu.jpg" alt="Jut.su" loading="lazy" /><b>Jut.su</b><span>jut-su.net</span></div>
+      <div class="poster reveal"><img src="./assets/logos/shikimori.png" alt="Shikimori" loading="lazy" /><b>Shikimori</b><span>shikimori.one</span></div>
+      <div class="poster reveal"><img src="./assets/logos/animego.png" alt="AnimeGO" loading="lazy" /><b>AnimeGO</b><span>animego.org</span></div>
+      <div class="poster reveal"><img src="./assets/logos/anixart.png" alt="Anixart" loading="lazy" /><b>Anixart</b><span>anixart.tv</span></div>
+      <div class="poster reveal"><div class="poster-initials">AO</div><b>AnimeOn</b><span>animeon.cc</span></div>
+      <div class="poster more reveal"><b>+ Kinogo Anime</b><span>и новые — каталог расширяется</span></div>
+    </div>
+  </section>
+
+  <section class="section" id="how">
+    <p class="eyebrow">Как это работает</p>
+    <h2>Три шага до просмотра</h2>
+    <div class="steps">
+      <div class="step reveal"><b>01</b><i data-lucide="download"></i><h3>Скачай</h3><p>Установщик для Windows или APK для Android. iOS — через облачную сборку.</p></div>
+      <div class="step reveal"><b>02</b><i data-lucide="mouse-pointer-click"></i><h3>Выбери сервис</h3><p>Открой каталог, добавь любимое в избранное — оно сохраняется.</p></div>
+      <div class="step reveal"><b>03</b><i data-lucide="play"></i><h3>Смотри</h3><p>Сайт открывается внутри AniDa. Реклама режется, история ведётся.</p></div>
+    </div>
+  </section>
+
+  <section class="section download" id="download">
+    <p class="eyebrow">Скачать</p>
+    <h2>Забери AniDa</h2>
+    <div class="dl-grid">
+      <a class="dl-card reveal" href="./downloads/AniDa%20Setup.exe">
+        <i data-lucide="monitor"></i><h3>Windows</h3><p>Установщик • 92.7 МБ • Windows 10+</p><span class="btn btn-primary">Скачать .exe</span>
+      </a>
+      <a class="dl-card reveal" href="./downloads/AniDa-debug.apk">
+        <i data-lucide="smartphone"></i><h3>Android</h3><p>APK • 13.3 МБ • Android 8+</p><span class="btn btn-primary">Скачать .apk</span>
+      </a>
+      <div class="dl-card reveal soon">
+        <i data-lucide="apple"></i><h3>iOS</h3><p>Сборка через облако — инструкция внутри проекта</p><span class="btn btn-ghost">Скоро</span>
+      </div>
+    </div>
+    <p class="note">Android: разреши установку из неизвестных источников. Windows: если SmartScreen ругнётся — «Подробнее → Выполнить в любом случае», установщик без коммерческой подписи.</p>
+  </section>
+
+  <section class="section" id="faq">
+    <p class="eyebrow">FAQ</p>
+    <h2>Частые вопросы</h2>
+    <details class="reveal"><summary>Это безопасно? Антивирус ругается</summary><p>AniDa не собирает данные и ничего не отправляет на серверы. Антивирусы иногда реагируют на неподписанные установщики — добавь папку в исключения, это стандартная практика для инди-софта.</p></details>
+    <details class="reveal"><summary>Почему на телефоне сайты открываются отдельно?</summary><p>Аниме-сайты запрещают встраивание в приложения. Поэтому на телефоне AniDa открывает их в системном окне поверх — с мобильной вёрсткой, куками и авторизацией.</p></details>
+    <details class="reveal"><summary>Реклама убирается полностью?</summary><p>Баннеры, всплывашки и кнопки «Пропустить» — да, автоматически. Видеореклама без меток, идущая с тех же серверов, что и видео, — глушится и проматывается, но убрать её на 100% технически нельзя нигде.</p></details>
+    <details class="reveal"><summary>Когда версия для iOS?</summary><p>Проект готов, сборка идёт через облачный Mac. Следи за разделом «Скачать».</p></details>
+    <details class="reveal"><summary>Discord-статус не появляется</summary><p>Нужен запущенный десктопный Discord, включённое «Отображать текущую активность» и статус «Подключено» в Настройках AniDa.</p></details>
+  </section>
+
+  <footer>
+    <div class="foot-inner">
+      <a class="brand" href="#top"><img src="./assets/ava.png" alt="AniDa" /><span>AniDa</span></a>
+      <p>AniDa v1.1.0 — единый лаунчер аниме-платформ. Контент принадлежит их владельцам.</p>
+    </div>
+  </footer>
+
+  <script src="./app.js"></script>
+  <script>lucide.createIcons();</script>
+</body>
+</html>
